@@ -1,10 +1,15 @@
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>ReplyShastra</title>
+
 <style>
 body{
+margin:0;
 background:black;
 color:white;
 display:flex;
@@ -14,23 +19,23 @@ height:100vh;
 font-family:sans-serif;
 }
 </style>
+
 </head>
 
 <body>
 
-<h2>Loading ReplyShastra...</h2>
+<h2>Welcome to ReplyShastra...</h2>
 
 <script>
 
-// 🔥 ERROR DEBUG (remove later)
-window.onerror = function(msg){
-alert("Error: " + msg);
-}
+// 🔥 SAFE START (no crash)
+document.addEventListener("DOMContentLoaded", function(){
 
-// 🔥 SPLASH DELAY
 setTimeout(()=>{
 
-const user = localStorage.getItem("rs_user")
+try{
+
+let user = localStorage.getItem("rs_user")
 
 if(user){
 window.location.href = "/app.html"
@@ -38,7 +43,16 @@ window.location.href = "/app.html"
 window.location.href = "/login.html"
 }
 
-},1500)
+}catch(e){
+
+// fallback (kabhi error aaye to login bhej de)
+window.location.href = "/login.html"
+
+}
+
+},2000)
+
+})
 
 </script>
 
