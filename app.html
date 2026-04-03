@@ -15,33 +15,22 @@
 
 <style>
 
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Quicksand',sans-serif;}
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Quicksand',sans-serif;
+}
 
-body{background:#050008;color:white;height:100vh;overflow:hidden;}
-
-/* INTRO */
-#introScreen{
-position:fixed;
-inset:0;
+body{
 background:#050008;
-display:flex;
-align-items:center;
-justify-content:center;
-z-index:999;
-}
-
-#introScreen img{
-width:120px;
-animation:pulse 2s infinite;
-}
-
-@keyframes pulse{
-0%{transform:scale(1)}
-50%{transform:scale(1.1)}
-100%{transform:scale(1)}
+color:white;
+height:100vh;
+overflow:hidden;
 }
 
 /* HEADER */
+
 .header{
 position:fixed;
 top:0;
@@ -54,15 +43,27 @@ gap:12px;
 padding:0 15px;
 background:rgba(0,0,0,.55);
 z-index:60;
+backdrop-filter:blur(10px);
 }
 
-.menuBtn{font-size:26px;cursor:pointer;}
+.menuBtn{
+font-size:26px;
+cursor:pointer;
+}
 
-.logo img{width:34px;border-radius:10px;}
+.logo img{
+width:34px;
+border-radius:10px;
+}
 
-.username{margin-left:auto;font-size:13px;opacity:.8;}
+.username{
+margin-left:auto;
+font-size:13px;
+opacity:.8;
+}
 
-/* MENU */
+/* SIDE MENU */
+
 .sideMenu{
 position:fixed;
 top:0;
@@ -70,36 +71,62 @@ left:-260px;
 width:260px;
 height:100%;
 background:#140021;
-padding:20px;
-transition:.3s;
+padding:20px 25px;
+transition:.35s;
 z-index:100;
+overflow:auto;
 }
 
-.sideMenu a{display:block;margin:18px 0;color:white;text-decoration:none;}
+.sideMenu a{
+display:block;
+margin:18px 0;
+font-size:17px;
+text-decoration:none;
+color:white;
+}
+
+.userBlock{
+margin-top:60px;
+padding-bottom:15px;
+border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.userName{
+font-size:18px;
+font-weight:600;
+}
+
+.userPlan{
+font-size:13px;
+opacity:.7;
+}
 
 .installBtnMenu{
-margin-top:20px;
-padding:12px;
+margin-top:25px;
+padding:14px;
 text-align:center;
 background:linear-gradient(135deg,#7b2cff,#b067ff);
-border-radius:10px;
+border-radius:12px;
+font-weight:600;
 }
 
 #menuOverlay{
 position:fixed;
 inset:0;
-background:rgba(0,0,0,.5);
+background:rgba(0,0,0,.55);
 display:none;
+z-index:55;
 }
 
 /* CHAT */
+
 .chatbox{
 position:fixed;
 top:65px;
-bottom:80px;
+bottom:78px;
 left:0;
 right:0;
-overflow:auto;
+overflow-y:auto;
 padding:15px;
 display:flex;
 flex-direction:column;
@@ -108,9 +135,10 @@ background:url("weapon-bg.png") center/cover no-repeat;
 }
 
 .msg{
-max-width:75%;
-padding:12px;
-border-radius:16px;
+max-width:78%;
+padding:12px 15px;
+border-radius:18px;
+font-size:15px;
 }
 
 .user{
@@ -121,52 +149,34 @@ background:linear-gradient(135deg,#7b2cff,#b067ff);
 .bot{
 align-self:flex-start;
 background:#1b1b24;
+border:1px solid rgba(255,255,255,.1);
 }
 
+/* COPY */
+
 .copyBtn{
+margin-top:6px;
 font-size:12px;
-margin-top:5px;
 opacity:.7;
 cursor:pointer;
 }
 
-/* INPUT */
-.inputArea{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-display:flex;
-gap:10px;
-padding:10px;
-background:rgba(0,0,0,.6);
-}
-
-input{
-flex:1;
-padding:12px;
-border:none;
-border-radius:10px;
-background:#0e0e14;
-color:white;
-}
-
-button{
-padding:12px;
-border:none;
-border-radius:10px;
-background:white;
-color:black;
-}
-
 /* TYPING */
+
 .typing{
 display:flex;
 gap:4px;
+padding:10px 14px;
+background:#1b1b24;
+border-radius:18px;
+width:60px;
 }
 
 .dot{
-width:6px;height:6px;background:white;border-radius:50%;
+width:6px;
+height:6px;
+background:white;
+border-radius:50%;
 animation:blink 1.2s infinite;
 }
 
@@ -175,75 +185,139 @@ animation:blink 1.2s infinite;
 40%{opacity:1}
 }
 
+/* INPUT */
+
+.inputArea{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+display:flex;
+gap:10px;
+padding:12px;
+background:rgba(0,0,0,.65);
+}
+
+input{
+flex:1;
+padding:14px;
+border-radius:14px;
+border:none;
+background:#0e0e14;
+color:white;
+}
+
+.sendBtn{
+padding:12px 18px;
+border:none;
+border-radius:14px;
+background:linear-gradient(135deg,#c0c0c0,#ffffff);
+color:black;
+font-weight:600;
+cursor:pointer;
+}
+
 </style>
 
 </head>
 
 <body>
 
-<!-- INTRO -->
-<div id="introScreen">
-<img src="icon.png">
+<!-- MENU -->
+
+<div id="menu" class="sideMenu">
+
+<div class="userBlock">
+<div id="menuName" class="userName">User</div>
+<div class="userPlan">Free Plan</div>
 </div>
 
-<!-- MENU -->
-<div id="menu" class="sideMenu">
 <a href="#">Subscription</a>
-<a href="#" onclick="shareApp()">Share App</a>
-<a href="#">About</a>
-<a href="#">Privacy</a>
-<a href="#">Terms</a>
+<a href="#">Share App</a>
+<a href="about.html">About</a>
+<a href="privacy.html">Privacy</a>
+<a href="terms.html">Terms</a>
 
 <div class="installBtnMenu">
-<a href="#" onclick="installApp()">⬇ Download App</a>
+<a href="#">⬇ Download App</a>
 </div>
 
-<hr>
+<hr style="opacity:.2;margin:25px 0;">
 
 <a href="#" onclick="logout()">Logout</a>
+
 </div>
 
 <div id="menuOverlay"></div>
 
 <!-- HEADER -->
+
 <div class="header">
+
 <div class="menuBtn" onclick="toggleMenu()">☰</div>
-<div class="logo"><img src="icon.png"></div>
+
+<div class="logo">
+<img src="icon.png">
+</div>
+
 <div>ReplyShastra</div>
+
 <div id="username" class="username"></div>
+
 </div>
 
 <!-- CHAT -->
+
 <div id="chat" class="chatbox"></div>
 
 <!-- INPUT -->
-<div class="inputArea">
-<input id="text" placeholder="Describe your situation...">
-<button onclick="send()">Send</button>
-</div>
 
-<!-- AUDIO -->
-<audio id="sendSound" src="send.mp3"></audio>
-<audio id="replySound" src="reply.mp3"></audio>
-<audio id="typingSound" src="typing.mp3"></audio>
+<div class="inputArea">
+
+<input id="text" placeholder="Describe your situation...">
+
+<button class="sendBtn" onclick="send()">Send</button>
+
+</div>
 
 <script>
 
 const user = localStorage.getItem("rs_user")
-if(!user){window.location="login.html"}
+
+if(!user){
+window.location="login.html"
+}
 
 const name = user.split("@")[0]
-document.getElementById("username").innerText=name+" | 10 left"
+
+document.getElementById("username").innerText=name
+document.getElementById("menuName").innerText=name
+
+let repliesLeft = localStorage.getItem("replies_left")
+
+if(!repliesLeft){
+repliesLeft=10
+localStorage.setItem("replies_left",10)
+}
+
+function updateHeader(){
+document.getElementById("username").innerText=name+" | "+repliesLeft+" left"
+}
+
+updateHeader()
 
 let menuOpen=false
 
 function toggleMenu(){
-let menu=document.getElementById("menu")
-let overlay=document.getElementById("menuOverlay")
+
+const menu=document.getElementById("menu")
+const overlay=document.getElementById("menuOverlay")
 
 menuOpen=!menuOpen
+
 menu.style.left=menuOpen?"0":"-260px"
 overlay.style.display=menuOpen?"block":"none"
+
 }
 
 document.getElementById("menuOverlay").onclick=toggleMenu
@@ -252,94 +326,94 @@ const chat=document.getElementById("chat")
 const text=document.getElementById("text")
 
 function addMessage(msg,type){
+
 let div=document.createElement("div")
 div.className="msg "+type
 div.innerText=msg
 
 if(type==="bot"){
+
 let copy=document.createElement("div")
 copy.className="copyBtn"
 copy.innerText="Copy"
-copy.onclick=()=>navigator.clipboard.writeText(msg)
+
+copy.onclick=()=>{
+navigator.clipboard.writeText(msg)
+copy.innerText="Copied"
+setTimeout(()=>copy.innerText="Copy",1200)
+}
+
 div.appendChild(copy)
+
 }
 
 chat.appendChild(div)
 chat.scrollTop=chat.scrollHeight
+
 }
 
 function showTyping(){
-let t=document.createElement("div")
-t.className="typing"
-t.id="typing"
-t.innerHTML="<div class='dot'></div><div class='dot'></div><div class='dot'></div>"
-chat.appendChild(t)
 
-document.getElementById("typingSound").play()
+let typing=document.createElement("div")
+
+typing.className="typing"
+typing.id="typing"
+
+typing.innerHTML="<div class='dot'></div><div class='dot'></div><div class='dot'></div>"
+
+chat.appendChild(typing)
+
 }
 
 function removeTyping(){
+
 let t=document.getElementById("typing")
 if(t)t.remove()
+
 }
 
 function send(){
+
+if(repliesLeft<=0){
+
+addMessage("Daily reply limit reached.","bot")
+return
+
+}
+
 let msg=text.value.trim()
+
 if(!msg)return
 
-document.getElementById("sendSound").play()
-
 addMessage(msg,"user")
+
 text.value=""
 
 showTyping()
 
 setTimeout(()=>{
+
 removeTyping()
 
-addMessage("Example reply generated by AI.","bot")
+let reply="Example reply generated by AI."
 
-document.getElementById("replySound").play()
+addMessage(reply,"bot")
+
+repliesLeft--
+
+localStorage.setItem("replies_left",repliesLeft)
+
+updateHeader()
 
 },1200)
+
 }
 
 function logout(){
+
 localStorage.removeItem("rs_user")
 window.location="login.html"
-}
 
-function shareApp(){
-if(navigator.share){
-navigator.share({
-title:"ReplyShastra AI",
-url:"https://replyshastra.web.app"
-})
-}else{
-alert("Share not supported")
-}
-}
-
-let deferredPrompt
-
-window.addEventListener('beforeinstallprompt',(e)=>{
-e.preventDefault()
-deferredPrompt=e
-})
-
-function installApp(){
-if(deferredPrompt){
-deferredPrompt.prompt()
-}else{
-alert("Install not available")
-}
-}
-
-/* INTRO HIDE */
-window.onload=()=>{
-setTimeout(()=>{
-document.getElementById("introScreen").style.display="none"
-},2000)
 }
 
 </script>
