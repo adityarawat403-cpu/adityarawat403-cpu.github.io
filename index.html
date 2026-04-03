@@ -1,58 +1,65 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>ReplyShastra</title>
 
 <style>
+
 body{
 margin:0;
-background:black;
+background:#050008;
 color:white;
+font-family:sans-serif;
 display:flex;
 justify-content:center;
 align-items:center;
 height:100vh;
-font-family:sans-serif;
+flex-direction:column;
 }
+
+/* LOGO */
+.logo{
+width:120px;
+margin-bottom:25px;
+}
+
+/* BUTTON */
+button{
+padding:14px 30px;
+border:none;
+border-radius:30px;
+background:linear-gradient(135deg,#7b2cff,#b067ff);
+color:white;
+font-size:16px;
+cursor:pointer;
+box-shadow:0 0 20px #7b2cff;
+}
+
 </style>
 
 </head>
 
 <body>
 
-<h2>Welcome to ReplyShastra...</h2>
+<img src="icon.png" class="logo">
+
+<button onclick="enterApp()">Enter</button>
 
 <script>
 
-// 🔥 SAFE START (no crash)
-document.addEventListener("DOMContentLoaded", function(){
+function enterApp(){
 
+// 🔊 sound
+let audio = new Audio("intro.mp3")
+audio.play().catch(()=>{})
+
+// 🎬 redirect to intro page
 setTimeout(()=>{
-
-try{
-
-let user = localStorage.getItem("rs_user")
-
-if(user){
-window.location.href = "/app.html"
-}else{
-window.location.href = "/login.html"
-}
-
-}catch(e){
-
-// fallback (kabhi error aaye to login bhej de)
-window.location.href = "/login.html"
+window.location.href = "/intro.html"
+},500)
 
 }
-
-},2000)
-
-})
 
 </script>
 
