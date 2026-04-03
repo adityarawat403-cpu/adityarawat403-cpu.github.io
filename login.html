@@ -1,157 +1,163 @@
-<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>ReplyShastra Login</title><link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet"><style>
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ReplyShastra Login</title>
 
-*{
-box-sizing:border-box;
-}
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 
+<!-- ✅ CORRECT FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+<style>
 body{
 background:#0a0015;
 font-family:'Quicksand';
 display:flex;
 align-items:center;
 justify-content:center;
-min-height:100vh;
+height:100vh;
 color:white;
 margin:0;
-padding:20px;
 }
-
-/* CARD */
 
 .card{
 background:#140021;
-padding:35px 25px;
+padding:30px;
 border-radius:20px;
-width:100%;
-max-width:340px;
+width:90%;
+max-width:350px;
 text-align:center;
-box-shadow:0 0 35px rgba(123,44,255,0.5);
-transition:0.3s;
+box-shadow:0 0 30px rgba(123,44,255,0.6);
 }
-
-.card:hover{
-box-shadow:0 0 55px rgba(123,44,255,0.8);
-}
-
-/* LOGO */
-
-.logo{
-width:75px;
-margin-bottom:12px;
-}
-
-/* INPUT */
 
 input{
 width:100%;
-padding:13px;
-margin-top:12px;
-border-radius:12px;
+padding:12px;
+margin-top:10px;
 border:none;
-background:#0d0d14;
+border-radius:10px;
+background:#0e0e14;
 color:white;
-font-size:15px;
-outline:none;
 }
 
-/* BUTTON */
-
 button{
-margin-top:15px;
+margin-top:12px;
 width:100%;
-padding:13px;
+padding:12px;
 border:none;
-border-radius:14px;
+border-radius:12px;
 background:linear-gradient(135deg,#7b2cff,#b067ff);
 color:white;
 font-weight:600;
 cursor:pointer;
-font-size:15px;
-transition:0.25s;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+<h2>ReplyShastra</h2>
+
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="signup()">Signup</button>
+<button onclick="login()">Login</button>
+
+<hr>
+
+<input id="phone" placeholder="+91XXXXXXXXXX">
+<div id="recaptcha"></div>
+<button onclick="sendOTP()">Send OTP</button>
+
+<input id="otp" placeholder="Enter OTP">
+<button onclick="verifyOTP()">Verify OTP</button>
+
+<hr>
+
+<button onclick="googleLogin()">Login with Google</button>
+
+</div>
+
+<script>
+
+// 🔥 YOUR CONFIG (READY)
+const firebaseConfig = {
+apiKey: "AIzaSyABlrB9kBCJV1YS-8t3SJrqHUFpqb-71Mo",
+authDomain: "replyshastra.firebaseapp.com",
+projectId: "replyshastra",
+appId: "1:346754998835:web:ecca09c1bb98a5f9a7f946"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// 🔐 SIGNUP
+function signup(){
+let email = document.getElementById("email").value;
+let pass = document.getElementById("password").value;
+
+auth.createUserWithEmailAndPassword(email,pass)
+.then(()=>{
+alert("Signup success");
+window.location="app.html";
+})
+.catch(e=>alert(e.message));
 }
 
-button:hover{
-box-shadow:0 0 18px #7b2cff;
-transform:scale(1.02);
-}
-
-/* SECOND BUTTON */
-
-.secondary{
-background:#1b1b24;
-}
-
-.secondary:hover{
-box-shadow:0 0 12px #444;
-}
-
-/* OR TEXT */
-
-.or{
-margin:16px 0;
-opacity:.6;
-font-size:13px;
-}
-
-</style></head><body><div class="card"><img src="icon.png" class="logo"><h2>ReplyShastra</h2><p>AI Relationship Coach</p><!-- LOGIN --><div id="loginBox"><input id="username" placeholder="Username"><input id="password" type="password" placeholder="Password"><button onclick="login()">Login</button>
-
-<button class="secondary" onclick="showCreate()">Create Account</button>
-
-</div><!-- CREATE ACCOUNT --><div id="createBox" style="display:none"><button onclick="phoneSignup()">Signup with Phone</button>
-
-<button onclick="emailSignup()">Signup with Email</button>
-
-<button onclick="googleSignup()">Signup with Google</button>
-
-<div class="or">Already have account?</div><button class="secondary" onclick="showLogin()">Back to Login</button>
-
-</div></div><script>
-
-/* LOGIN */
-
+// 🔐 LOGIN
 function login(){
+let email = document.getElementById("email").value;
+let pass = document.getElementById("password").value;
 
-let user=document.getElementById("username").value
-
-if(!user){
-alert("Enter username")
-return
+auth.signInWithEmailAndPassword(email,pass)
+.then(()=>{
+window.location="app.html";
+})
+.catch(e=>alert(e.message));
 }
 
-localStorage.setItem("rs_user",user)
+// 📱 PHONE OTP
+window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha', {
+size: 'normal'
+});
 
-window.location.href="/app.html"
+function sendOTP(){
+let phone = document.getElementById("phone").value;
 
+auth.signInWithPhoneNumber(phone, recaptchaVerifier)
+.then(result=>{
+window.confirmationResult = result;
+alert("OTP Sent");
+})
+.catch(e=>alert(e.message));
 }
 
-/* SWITCH SCREENS */
+function verifyOTP(){
+let code = document.getElementById("otp").value;
 
-function showCreate(){
-
-document.getElementById("loginBox").style.display="none"
-document.getElementById("createBox").style.display="block"
-
+confirmationResult.confirm(code)
+.then(()=>{
+window.location="app.html";
+})
+.catch(()=>alert("Invalid OTP"));
 }
 
-function showLogin(){
+// 🔵 GOOGLE LOGIN
+function googleLogin(){
+let provider = new firebase.auth.GoogleAuthProvider();
 
-document.getElementById("loginBox").style.display="block"
-document.getElementById("createBox").style.display="none"
-
+auth.signInWithPopup(provider)
+.then(()=>{
+window.location="app.html";
+})
+.catch(e=>alert(e.message));
 }
 
-/* SIGNUP PLACEHOLDERS */
+</script>
 
-function phoneSignup(){
-alert("Phone signup coming soon")
-}
-
-function emailSignup(){
-alert("Email signup coming soon")
-}
-
-function googleSignup(){
-alert("Google signup coming soon")
-}
-
-</script></body></html>
+</body>
+</html>
