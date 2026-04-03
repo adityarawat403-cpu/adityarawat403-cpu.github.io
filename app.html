@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,12 +16,7 @@
 
 <style>
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Quicksand',sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Quicksand',sans-serif;}
 
 body{
 background:#050008;
@@ -46,23 +42,13 @@ z-index:60;
 backdrop-filter:blur(10px);
 }
 
-.menuBtn{
-font-size:26px;
-cursor:pointer;
-}
+.menuBtn{font-size:26px;cursor:pointer;}
 
-.logo img{
-width:34px;
-border-radius:10px;
-}
+.logo img{width:34px;border-radius:10px;}
 
-.username{
-margin-left:auto;
-font-size:13px;
-opacity:.8;
-}
+.username{margin-left:auto;font-size:13px;opacity:.8;}
 
-/* SIDE MENU */
+/* MENU */
 
 .sideMenu{
 position:fixed;
@@ -71,51 +57,26 @@ left:-260px;
 width:260px;
 height:100%;
 background:#140021;
-padding:20px 25px;
+padding:20px;
 transition:.35s;
 z-index:100;
-overflow:auto;
 }
 
 .sideMenu a{
 display:block;
 margin:18px 0;
-font-size:17px;
-text-decoration:none;
 color:white;
+text-decoration:none;
 }
 
-.userBlock{
-margin-top:60px;
-padding-bottom:15px;
-border-bottom:1px solid rgba(255,255,255,.1);
-}
-
-.userName{
-font-size:18px;
-font-weight:600;
-}
-
-.userPlan{
-font-size:13px;
-opacity:.7;
-}
-
-.installBtnMenu{
-margin-top:25px;
-padding:14px;
-text-align:center;
-background:linear-gradient(135deg,#7b2cff,#b067ff);
-border-radius:12px;
-font-weight:600;
-}
+/* OVERLAY */
 
 #menuOverlay{
 position:fixed;
 inset:0;
-background:rgba(0,0,0,.55);
+background:rgba(0,0,0,.5);
 display:none;
-z-index:55;
+z-index:50;
 }
 
 /* CHAT */
@@ -123,7 +84,7 @@ z-index:55;
 .chatbox{
 position:fixed;
 top:65px;
-bottom:78px;
+bottom:75px;
 left:0;
 right:0;
 overflow-y:auto;
@@ -131,12 +92,18 @@ padding:15px;
 display:flex;
 flex-direction:column;
 gap:12px;
-background:#0b0015;
+
+/* ✅ BACKGROUND FIX */
+background-image:url("./weapon-bg.png");
+background-size:cover;
+background-position:center;
 }
+
+/* MESSAGES */
 
 .msg{
 max-width:78%;
-padding:12px 15px;
+padding:12px;
 border-radius:18px;
 font-size:15px;
 }
@@ -149,36 +116,6 @@ background:linear-gradient(135deg,#7b2cff,#b067ff);
 .bot{
 align-self:flex-start;
 background:#1b1b24;
-border:1px solid rgba(255,255,255,.1);
-}
-
-.copyBtn{
-margin-top:6px;
-font-size:12px;
-opacity:.7;
-cursor:pointer;
-}
-
-.typing{
-display:flex;
-gap:4px;
-padding:10px 14px;
-background:#1b1b24;
-border-radius:18px;
-width:60px;
-}
-
-.dot{
-width:6px;
-height:6px;
-background:white;
-border-radius:50%;
-animation:blink 1.2s infinite;
-}
-
-@keyframes blink{
-0%,80%,100%{opacity:.2}
-40%{opacity:1}
 }
 
 /* INPUT */
@@ -207,7 +144,7 @@ color:white;
 padding:12px 18px;
 border:none;
 border-radius:14px;
-background:linear-gradient(135deg,#c0c0c0,#ffffff);
+background:white;
 color:black;
 font-weight:600;
 cursor:pointer;
@@ -220,24 +157,12 @@ cursor:pointer;
 
 <!-- MENU -->
 <div id="menu" class="sideMenu">
-
-<div class="userBlock">
-<div id="menuName" class="userName">User</div>
-<div class="userPlan">Free Plan</div>
-</div>
-
-<a href="#">Subscription</a>
+<a href="#" onclick="installApp()">⬇ Install App</a>
 <a href="#" onclick="shareApp()">Share App</a>
 <a href="about.html">About</a>
 <a href="privacy.html">Privacy</a>
 <a href="terms.html">Terms</a>
-
-<div class="installBtnMenu" onclick="installApp()">⬇ Download App</div>
-
-<hr style="opacity:.2;margin:25px 0;">
-
 <a href="#" onclick="logout()">Logout</a>
-
 </div>
 
 <div id="menuOverlay"></div>
@@ -245,13 +170,8 @@ cursor:pointer;
 <!-- HEADER -->
 <div class="header">
 <div class="menuBtn" onclick="toggleMenu()">☰</div>
-
-<div class="logo">
-<img src="icon.png">
-</div>
-
+<div class="logo"><img src="icon.png"></div>
 <div>ReplyShastra</div>
-
 <div id="username" class="username"></div>
 </div>
 
@@ -266,51 +186,23 @@ cursor:pointer;
 
 <script>
 
-document.addEventListener("DOMContentLoaded", function(){
-
-// USER CHECK
+/* USER CHECK */
 let user = localStorage.getItem("rs_user")
+if(!user){ window.location="login.html" }
 
-if(!user){
-window.location.href="/login.html"
-return
-}
-
-// NAME SAFE
 let name = user.includes("@") ? user.split("@")[0] : user
+document.getElementById("username").innerText = name
 
-const usernameEl = document.getElementById("username")
-const menuNameEl = document.getElementById("menuName")
-
-usernameEl.innerText = name
-menuNameEl.innerText = name
-
-// LIMIT
-let repliesLeft = localStorage.getItem("replies_left") || 10
-localStorage.setItem("replies_left",repliesLeft)
-
-function updateHeader(){
-usernameEl.innerText = name + " | " + repliesLeft + " left"
+/* MENU */
+let open=false
+function toggleMenu(){
+open=!open
+document.getElementById("menu").style.left = open?"0":"-260px"
+document.getElementById("menuOverlay").style.display = open?"block":"none"
 }
+document.getElementById("menuOverlay").onclick = toggleMenu
 
-updateHeader()
-
-// MENU
-let menuOpen=false
-
-window.toggleMenu = function(){
-const menu=document.getElementById("menu")
-const overlay=document.getElementById("menuOverlay")
-
-menuOpen=!menuOpen
-
-menu.style.left=menuOpen?"0":"-260px"
-overlay.style.display=menuOpen?"block":"none"
-}
-
-document.getElementById("menuOverlay").onclick=toggleMenu
-
-// CHAT
+/* CHAT */
 const chat=document.getElementById("chat")
 const text=document.getElementById("text")
 
@@ -318,88 +210,52 @@ function addMessage(msg,type){
 let div=document.createElement("div")
 div.className="msg "+type
 div.innerText=msg
-
-if(type==="bot"){
-let copy=document.createElement("div")
-copy.className="copyBtn"
-copy.innerText="Copy"
-
-copy.onclick=()=>{
-navigator.clipboard.writeText(msg)
-copy.innerText="Copied"
-setTimeout(()=>copy.innerText="Copy",1200)
-}
-
-div.appendChild(copy)
-}
-
 chat.appendChild(div)
 chat.scrollTop=chat.scrollHeight
 }
 
-function showTyping(){
-let typing=document.createElement("div")
-typing.className="typing"
-typing.id="typing"
-typing.innerHTML="<div class='dot'></div><div class='dot'></div><div class='dot'></div>"
-chat.appendChild(typing)
-}
-
-function removeTyping(){
-let t=document.getElementById("typing")
-if(t)t.remove()
-}
-
-window.send = function(){
-
-if(repliesLeft<=0){
-addMessage("Daily reply limit reached.","bot")
-return
-}
-
+function send(){
 let msg=text.value.trim()
-if(!msg)return
-
+if(!msg) return
 addMessage(msg,"user")
 text.value=""
 
-showTyping()
-
 setTimeout(()=>{
-removeTyping()
-
-let reply="Example reply generated by AI."
-addMessage(reply,"bot")
-
-repliesLeft--
-localStorage.setItem("replies_left",repliesLeft)
-
-updateHeader()
-
-},1200)
+addMessage("Example reply generated by AI.","bot")
+},1000)
 }
 
-text.addEventListener("keypress",e=>{
-if(e.key==="Enter") send()
-})
-
-// LOGOUT
-window.logout = function(){
+/* LOGOUT */
+function logout(){
 localStorage.removeItem("rs_user")
-window.location.href="/login.html"
+window.location="login.html"
 }
 
-// SHARE
-window.shareApp = function(){
-alert("Share feature coming soon")
+/* SHARE */
+function shareApp(){
+alert("Share coming soon")
 }
 
-// INSTALL
-window.installApp = function(){
-alert("Install coming soon")
-}
+/* ✅ INSTALL FIX (WORKING) */
+let deferredPrompt
 
+window.addEventListener('beforeinstallprompt', (e) => {
+e.preventDefault()
+deferredPrompt = e
 })
+
+function installApp(){
+if(deferredPrompt){
+deferredPrompt.prompt()
+}else{
+alert("Install not ready yet")
+}
+}
+
+/* ✅ SERVICE WORKER */
+if ('serviceWorker' in navigator) {
+navigator.serviceWorker.register('sw.js')
+}
 
 </script>
 
