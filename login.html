@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ReplyShastra Login</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 
-<!-- ✅ CORRECT FIREBASE -->
+<!-- 🔥 FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
@@ -17,7 +18,7 @@ font-family:'Quicksand';
 display:flex;
 align-items:center;
 justify-content:center;
-height:100vh;
+min-height:100vh;
 color:white;
 margin:0;
 }
@@ -27,18 +28,18 @@ background:#140021;
 padding:30px;
 border-radius:20px;
 width:90%;
-max-width:350px;
+max-width:340px;
 text-align:center;
-box-shadow:0 0 30px rgba(123,44,255,0.6);
+box-shadow:0 0 35px rgba(123,44,255,0.5);
 }
 
 input{
 width:100%;
 padding:12px;
 margin-top:10px;
-border:none;
 border-radius:10px;
-background:#0e0e14;
+border:none;
+background:#0d0d14;
 color:white;
 }
 
@@ -54,99 +55,65 @@ font-weight:600;
 cursor:pointer;
 }
 </style>
+
 </head>
 
 <body>
 
 <div class="card">
+
 <h2>ReplyShastra</h2>
 
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
 
-<button onclick="signup()">Signup</button>
 <button onclick="login()">Login</button>
-
-<hr>
-
-<input id="phone" placeholder="+91XXXXXXXXXX">
-<div id="recaptcha"></div>
-<button onclick="sendOTP()">Send OTP</button>
-
-<input id="otp" placeholder="Enter OTP">
-<button onclick="verifyOTP()">Verify OTP</button>
-
-<hr>
-
+<button onclick="signup()">Create Account</button>
 <button onclick="googleLogin()">Login with Google</button>
 
 </div>
 
 <script>
 
-// 🔥 YOUR CONFIG (READY)
-const firebaseConfig = {
+// 🔥 FIREBASE CONFIG
+firebase.initializeApp({
 apiKey: "AIzaSyABlrB9kBCJV1YS-8t3SJrqHUFpqb-71Mo",
 authDomain: "replyshastra.firebaseapp.com",
 projectId: "replyshastra",
 appId: "1:346754998835:web:ecca09c1bb98a5f9a7f946"
-};
+});
 
-firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-
-// 🔐 SIGNUP
-function signup(){
-let email = document.getElementById("email").value;
-let pass = document.getElementById("password").value;
-
-auth.createUserWithEmailAndPassword(email,pass)
-.then(()=>{
-alert("Signup success");
-window.location="app.html";
-})
-.catch(e=>alert(e.message));
-}
 
 // 🔐 LOGIN
 function login(){
-let email = document.getElementById("email").value;
-let pass = document.getElementById("password").value;
+let email=document.getElementById("email").value;
+let pass=document.getElementById("password").value;
 
 auth.signInWithEmailAndPassword(email,pass)
 .then(()=>{
 window.location="app.html";
 })
-.catch(e=>alert(e.message));
-}
-
-// 📱 PHONE OTP
-window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha', {
-size: 'normal'
+.catch(err=>{
+alert(err.message);
 });
-
-function sendOTP(){
-let phone = document.getElementById("phone").value;
-
-auth.signInWithPhoneNumber(phone, recaptchaVerifier)
-.then(result=>{
-window.confirmationResult = result;
-alert("OTP Sent");
-})
-.catch(e=>alert(e.message));
 }
 
-function verifyOTP(){
-let code = document.getElementById("otp").value;
+// 🆕 SIGNUP
+function signup(){
+let email=document.getElementById("email").value;
+let pass=document.getElementById("password").value;
 
-confirmationResult.confirm(code)
+auth.createUserWithEmailAndPassword(email,pass)
 .then(()=>{
-window.location="app.html";
+alert("Account created!");
 })
-.catch(()=>alert("Invalid OTP"));
+.catch(err=>{
+alert(err.message);
+});
 }
 
-// 🔵 GOOGLE LOGIN
+// 🔥 GOOGLE LOGIN
 function googleLogin(){
 let provider = new firebase.auth.GoogleAuthProvider();
 
@@ -154,7 +121,9 @@ auth.signInWithPopup(provider)
 .then(()=>{
 window.location="app.html";
 })
-.catch(e=>alert(e.message));
+.catch(err=>{
+alert(err.message);
+});
 }
 
 </script>
