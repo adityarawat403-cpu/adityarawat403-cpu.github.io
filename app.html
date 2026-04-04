@@ -252,4 +252,85 @@ replySound = document.getElementById("replySound");
 popup = document.getElementById("premiumPopup");
 
 // LOGIN CHECK
-auth.onAuthStateChanged(user
+auth.onAuthStateChanged(user=>{
+if(!user){
+window.location="login.html";
+}else{
+let name = user.email ? user.email.split("@")[0] : "User";
+document.getElementById("username").innerText = name;
+}
+});
+
+// overlay click
+overlay.onclick = toggleMenu;
+
+});
+
+// MENU
+let open=false;
+function toggleMenu(){
+open=!open;
+menu.style.left = open ? "0" : "-260px";
+overlay.style.display = open ? "block" : "none";
+}
+
+// CHAT
+function addMessage(msg,type){
+let div=document.createElement("div");
+div.className="msg "+type;
+div.innerText=msg;
+chat.appendChild(div);
+chat.scrollTop=chat.scrollHeight;
+}
+
+function send(){
+let msg=inputBox.value.trim();
+if(!msg) return;
+
+try{sendSound.play()}catch{}
+
+addMessage(msg,"user");
+inputBox.value="";
+
+setTimeout(()=>{
+try{replySound.play()}catch{}
+addMessage("🔥 AI reply generated","bot");
+},1000);
+}
+
+// LOGOUT
+function logout(){
+auth.signOut().then(()=>{
+window.location="login.html";
+});
+}
+
+// SHARE
+function shareApp(){
+alert("Share coming soon");
+}
+
+// SUBSCRIPTION
+function openSubscription(){
+popup.style.display="flex";
+}
+
+// INSTALL
+function installApp(){
+alert("Install option abhi available nahi hai");
+}
+
+// CLOSE POPUP
+function closePopup(){
+popup.style.display="none";
+}
+
+// SERVICE WORKER
+if("serviceWorker" in navigator){
+navigator.serviceWorker.register("sw.js");
+}
+
+</script>
+
+</body>
+</html>
