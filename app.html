@@ -312,7 +312,7 @@ alert("Sharing not supported on this device");
 
 // SUBSCRIPTION
 function openSubscription(){
-alert("🔥 Premium coming soon ₹99/month");
+document.getElementById("premiumPopup").style.display="flex";
 }
 
 
@@ -323,11 +323,11 @@ e.preventDefault();
 deferredPrompt=e;
 });
 
-function installApp(){
+ffunction installApp(){
 if(deferredPrompt){
 deferredPrompt.prompt();
 }else{
-alert("Install not available");
+alert("📲 Install option 1-2 bar use karne ke baad dikhega");
 }
 }
 
