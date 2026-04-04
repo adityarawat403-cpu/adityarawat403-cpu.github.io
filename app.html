@@ -298,7 +298,15 @@ window.location="login.html";
 
 // SHARE
 function shareApp(){
-alert("Share coming soon");
+if (navigator.share) {
+navigator.share({
+title: "ReplyShastra AI",
+text: "🔥 Best AI reply generator app! Try now:",
+url: "https://replyshastra.web.app"
+});
+} else {
+alert("Sharing not supported on this device");
+}
 }
 
 
