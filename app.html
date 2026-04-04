@@ -26,7 +26,6 @@ height:100vh;
 overflow:hidden;
 }
 
-/* HEADER */
 .header{
 position:fixed;
 top:0;
@@ -46,7 +45,6 @@ backdrop-filter:blur(10px);
 .logo img{width:34px;border-radius:10px;}
 .username{margin-left:auto;font-size:13px;opacity:.8;}
 
-/* MENU */
 .sideMenu{
 position:fixed;
 top:0;
@@ -66,7 +64,6 @@ color:white;
 text-decoration:none;
 }
 
-/* OVERLAY */
 #menuOverlay{
 position:fixed;
 inset:0;
@@ -75,7 +72,6 @@ display:none;
 z-index:50;
 }
 
-/* CHAT */
 .chatbox{
 position:fixed;
 top:65px;
@@ -92,7 +88,6 @@ background-size:cover;
 background-position:center;
 }
 
-/* MSG */
 .msg{
 max-width:78%;
 padding:12px;
@@ -110,7 +105,6 @@ align-self:flex-start;
 background:#1b1b24;
 }
 
-/* INPUT */
 .inputArea{
 position:fixed;
 bottom:0;
@@ -141,7 +135,6 @@ font-weight:600;
 cursor:pointer;
 }
 
-/* POPUP */
 #popup{
 position:fixed;
 inset:0;
@@ -167,7 +160,6 @@ box-shadow:0 0 25px #7b2cff;
 
 <body>
 
-<!-- MENU -->
 <div id="menu" class="sideMenu">
 <a href="#" onclick="openSubscription()">Subscription</a>
 <a href="#" onclick="installApp()">⬇ Install App</a>
@@ -180,7 +172,6 @@ box-shadow:0 0 25px #7b2cff;
 
 <div id="menuOverlay"></div>
 
-<!-- HEADER -->
 <div class="header">
 <div class="menuBtn" onclick="toggleMenu()">☰</div>
 <div class="logo"><img src="icon.png"></div>
@@ -188,16 +179,13 @@ box-shadow:0 0 25px #7b2cff;
 <div id="username" class="username"></div>
 </div>
 
-<!-- CHAT -->
 <div id="chat" class="chatbox"></div>
 
-<!-- INPUT -->
 <div class="inputArea">
 <input id="text" placeholder="Describe your situation...">
 <button class="sendBtn" onclick="send()">Send</button>
 </div>
 
-<!-- POPUP -->
 <div id="popup">
   <div class="popupBox">
     <h2>📲 Install App</h2>
@@ -205,13 +193,7 @@ box-shadow:0 0 25px #7b2cff;
     Install ReplyShastra for best experience 🚀
     </p>
 
-    <button onclick="installApp()" style="
-    width:100%;
-    padding:12px;
-    border:none;
-    border-radius:12px;
-    background:linear-gradient(135deg,#7b2cff,#b067ff);
-    color:white;">
+    <button onclick="installApp()" style="width:100%;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,#7b2cff,#b067ff);color:white;">
     Install Now
     </button>
 
@@ -226,7 +208,7 @@ box-shadow:0 0 25px #7b2cff;
 
 <script>
 
-// FIREBASE
+// 🔥 FIREBASE
 firebase.initializeApp({
 apiKey: "AIzaSyABlrB9kBCJV1YS-8t3SJrqHUfPqB-7lMo",
 authDomain: "replyshastra.firebaseapp.com",
@@ -236,7 +218,6 @@ appId: "1:346754998835:web:ecca09c1bb98a5f9a7f946"
 
 const auth = firebase.auth();
 
-// LOGIN CHECK
 auth.onAuthStateChanged(user=>{
 if(!user){
 window.location="login.html";
@@ -246,12 +227,21 @@ document.getElementById("username").innerText = name;
 }
 });
 
-// ELEMENTS
+// 🔥 ELEMENTS
 const menu = document.getElementById("menu");
 const menuOverlay = document.getElementById("menuOverlay");
 const chat = document.getElementById("chat");
 const text = document.getElementById("text");
 const popup = document.getElementById("popup");
+
+const sendSound = document.getElementById("sendSound");
+const replySound = document.getElementById("replySound");
+
+// 🔥 SOUND UNLOCK
+let soundEnabled = false;
+document.body.addEventListener('click', ()=>{
+soundEnabled = true;
+},{once:true});
 
 // MENU
 let open=false;
@@ -275,11 +265,25 @@ function send(){
 let msg=text.value.trim();
 if(!msg) return;
 
+// 🔊 SEND SOUND
+if(soundEnabled){
+sendSound.currentTime = 0;
+sendSound.play().catch(()=>{});
+}
+
 addMessage(msg,"user");
 text.value="";
 
 setTimeout(()=>{
+
+// 🔊 REPLY SOUND
+if(soundEnabled){
+replySound.currentTime = 0;
+replySound.play().catch(()=>{});
+}
+
 addMessage("AI reply aayega yaha 🔥","bot");
+
 },1000);
 }
 
@@ -318,11 +322,11 @@ function installApp(){
 if(deferredPrompt){
 deferredPrompt.prompt();
 }else{
-alert("📲 Chrome menu (3 dots) → Add to Home Screen");
+alert("📲 Chrome menu → Add to Home Screen");
 }
 }
 
-// POPUP AUTO
+// POPUP
 setTimeout(()=>{
 popup.style.display="flex";
 },5000);
