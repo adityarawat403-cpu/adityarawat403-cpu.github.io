@@ -1,9 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>ReplyShastra Login</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+background:#050008;
+color:white;
+font-family:'Quicksand';
+display:flex;
+align-items:center;
+justify-content:center;
+height:100vh;
+margin:0;
+}
+
+.box{
+background:#140021;
+padding:30px;
+border-radius:20px;
+width:90%;
+max-width:320px;
+text-align:center;
+box-shadow:0 0 25px #7b2cff;
+}
+
+input{
+width:100%;
+padding:14px;
+margin:10px 0;
+border:none;
+border-radius:12px;
+background:#0e0e14;
+color:white;
+}
+
+button{
+width:100%;
+padding:14px;
+margin-top:10px;
+border:none;
+border-radius:12px;
+background:linear-gradient(135deg,#7b2cff,#b067ff);
+color:white;
+font-weight:600;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>ReplyShastra</h2>
+
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="login()">Login</button>
+<button onclick="signup()">Create Account</button>
+<button onclick="googleLogin()">Login with Google</button>
+<button onclick="phoneLogin()">Login with Phone OTP</button>
+
+<div id="recaptcha-container"></div>
+
+</div>
+
+<!-- 🔥 FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
 <script>
 
-// 🔥 FIREBASE CONFIG
+// 🔥 CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyABlrB9kBCJV1YS-8t3SJrqHUfPqB-7lMo",
   authDomain: "replyshastra.firebaseapp.com",
@@ -17,7 +96,7 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
 
-// 🔐 AUTO LOGIN CHECK
+// 🔐 AUTO LOGIN
 auth.onAuthStateChanged(user => {
   if(user){
     localStorage.setItem("rs_user", user.email || user.phoneNumber);
@@ -33,7 +112,7 @@ function login(){
 
   auth.signInWithEmailAndPassword(email, pass)
   .then(()=>{
-    window.location = "app.html";
+    window.location="app.html";
   })
   .catch(err=>alert(err.message));
 }
@@ -47,7 +126,7 @@ function signup(){
   auth.createUserWithEmailAndPassword(email, pass)
   .then(()=>{
     alert("Account created ✅");
-    window.location = "app.html";
+    window.location="app.html";
   })
   .catch(err=>alert(err.message));
 }
@@ -59,14 +138,15 @@ function googleLogin(){
 
   auth.signInWithPopup(provider)
   .then(()=>{
-    window.location = "app.html";
+    window.location="app.html";
   })
   .catch(err=>alert(err.message));
 }
 
 
-// 📱 PHONE OTP (ADVANCED)
+// 📱 PHONE OTP
 function phoneLogin(){
+
   let phone = prompt("Enter phone number with +91");
 
   let recaptcha = new firebase.auth.RecaptchaVerifier('recaptcha-container');
@@ -77,11 +157,12 @@ function phoneLogin(){
     return result.confirm(code);
   })
   .then(()=>{
-    window.location = "app.html";
+    window.location="app.html";
   })
   .catch(err=>alert(err.message));
 }
 
 </script>
 
-<div id="recaptcha-container"></div>
+</body>
+</html>
