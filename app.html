@@ -26,6 +26,7 @@ height:100vh;
 overflow:hidden;
 }
 
+/* HEADER */
 .header{
 position:fixed;
 top:0;
@@ -45,6 +46,7 @@ backdrop-filter:blur(10px);
 .logo img{width:34px;border-radius:10px;}
 .username{margin-left:auto;font-size:13px;opacity:.8;}
 
+/* MENU */
 .sideMenu{
 position:fixed;
 top:0;
@@ -64,6 +66,7 @@ color:white;
 text-decoration:none;
 }
 
+/* OVERLAY */
 #menuOverlay{
 position:fixed;
 inset:0;
@@ -72,6 +75,7 @@ display:none;
 z-index:50;
 }
 
+/* CHAT */
 .chatbox{
 position:fixed;
 top:65px;
@@ -88,6 +92,7 @@ background-size:cover;
 background-position:center;
 }
 
+/* MSG */
 .msg{
 max-width:78%;
 padding:12px;
@@ -105,6 +110,7 @@ align-self:flex-start;
 background:#1b1b24;
 }
 
+/* INPUT */
 .inputArea{
 position:fixed;
 bottom:0;
@@ -133,6 +139,27 @@ background:white;
 color:black;
 font-weight:600;
 cursor:pointer;
+}
+
+/* POPUP */
+#popup{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.7);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:999;
+}
+
+.popupBox{
+background:#140021;
+padding:25px;
+border-radius:18px;
+text-align:center;
+width:80%;
+max-width:320px;
+box-shadow:0 0 25px #7b2cff;
 }
 </style>
 
@@ -170,6 +197,30 @@ cursor:pointer;
 <button class="sendBtn" onclick="send()">Send</button>
 </div>
 
+<!-- POPUP -->
+<div id="popup">
+  <div class="popupBox">
+    <h2>📲 Install App</h2>
+    <p style="opacity:.7;margin:10px 0">
+    Install ReplyShastra for best experience 🚀
+    </p>
+
+    <button onclick="installApp()" style="
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg,#7b2cff,#b067ff);
+    color:white;">
+    Install Now
+    </button>
+
+    <button onclick="closePopup()" style="margin-top:10px;background:none;border:none;color:#aaa;">
+    Later
+    </button>
+  </div>
+</div>
+
 <audio id="sendSound" src="send.mp3"></audio>
 <audio id="replySound" src="reply.mp3"></audio>
 
@@ -195,13 +246,12 @@ document.getElementById("username").innerText = name;
 }
 });
 
-// ELEMENT FIX
+// ELEMENTS
 const menu = document.getElementById("menu");
 const menuOverlay = document.getElementById("menuOverlay");
 const chat = document.getElementById("chat");
 const text = document.getElementById("text");
-const sendSound = document.getElementById("sendSound");
-const replySound = document.getElementById("replySound");
+const popup = document.getElementById("popup");
 
 // MENU
 let open=false;
@@ -210,7 +260,6 @@ open=!open;
 menu.style.left = open ? "0" : "-260px";
 menuOverlay.style.display = open ? "block" : "none";
 }
-
 menuOverlay.onclick = toggleMenu;
 
 // CHAT
@@ -226,44 +275,40 @@ function send(){
 let msg=text.value.trim();
 if(!msg) return;
 
-try{sendSound.play()}catch{}
-
 addMessage(msg,"user");
 text.value="";
 
 setTimeout(()=>{
-try{replySound.play()}catch{}
 addMessage("AI reply aayega yaha 🔥","bot");
 },1000);
 }
 
 // LOGOUT
 function logout(){
-auth.signOut().then(()=>{
-window.location="login.html";
-});
+auth.signOut().then(()=> window.location="login.html");
 }
 
-// SHARE (FIXED)
+// SHARE
 function shareApp(){
-if (navigator.share) {
+if(navigator.share){
 navigator.share({
-title: "ReplyShastra AI",
-text: "🔥 Best AI reply generator app!",
-url: "https://replyshastra.web.app"
+title:"ReplyShastra",
+text:"Best AI reply app 🔥",
+url:location.href
 });
-} else {
+}else{
 alert("Sharing not supported");
 }
 }
 
-// SUBSCRIPTION (FIXED)
+// SUBSCRIPTION
 function openSubscription(){
 alert("💎 Premium ₹99/month coming soon");
 }
 
-// INSTALL (SAFE)
+// INSTALL
 let deferredPrompt;
+
 window.addEventListener('beforeinstallprompt',(e)=>{
 e.preventDefault();
 deferredPrompt=e;
@@ -273,11 +318,20 @@ function installApp(){
 if(deferredPrompt){
 deferredPrompt.prompt();
 }else{
-alert("📲 Install option abhi available nahi hai");
+alert("Install option abhi available nahi hai");
 }
 }
 
-// SERVICE WORKER
+// POPUP AUTO
+setTimeout(()=>{
+popup.style.display="flex";
+},5000);
+
+function closePopup(){
+popup.style.display="none";
+}
+
+// SW
 if('serviceWorker' in navigator){
 navigator.serviceWorker.register('sw.js');
 }
