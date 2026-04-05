@@ -1,214 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>ReplyShastra AI</title>
-
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#7b2cff">
-<link rel="icon" href="icon.png">
-
-<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
-
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Quicksand',sans-serif;}
-
-body{
-background:#050008;
-color:white;
-height:100vh;
-overflow:hidden;
-}
-
-.header{
-position:fixed;
-top:0;
-left:0;
-right:0;
-height:65px;
-display:flex;
-align-items:center;
-gap:12px;
-padding:0 15px;
-background:rgba(0,0,0,.55);
-z-index:60;
-backdrop-filter:blur(10px);
-}
-
-.menuBtn{font-size:26px;cursor:pointer;}
-.logo img{width:34px;border-radius:10px;}
-.username{margin-left:auto;font-size:13px;opacity:.8;}
-
-.sideMenu{
-position:fixed;
-top:0;
-left:-260px;
-width:260px;
-height:100%;
-background:#140021;
-padding:20px;
-transition:.35s;
-z-index:100;
-}
-
-.sideMenu a{
-display:block;
-margin:18px 0;
-color:white;
-text-decoration:none;
-}
-
-#menuOverlay{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.5);
-display:none;
-z-index:50;
-}
-
-.chatbox{
-position:fixed;
-top:65px;
-bottom:75px;
-left:0;
-right:0;
-overflow-y:auto;
-padding:15px;
-display:flex;
-flex-direction:column;
-gap:12px;
-background-image:url("weapon-bg.png");
-background-size:cover;
-background-position:center;
-}
-
-.msg{
-max-width:78%;
-padding:12px;
-border-radius:18px;
-font-size:15px;
-}
-
-.user{
-align-self:flex-end;
-background:linear-gradient(135deg,#7b2cff,#b067ff);
-}
-
-.bot{
-align-self:flex-start;
-background:#1b1b24;
-}
-
-.inputArea{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-display:flex;
-gap:10px;
-padding:12px;
-background:rgba(0,0,0,.65);
-}
-
-input{
-flex:1;
-padding:14px;
-border-radius:14px;
-border:none;
-background:#0e0e14;
-color:white;
-}
-
-.sendBtn{
-padding:12px 18px;
-border:none;
-border-radius:14px;
-background:white;
-color:black;
-font-weight:600;
-cursor:pointer;
-}
-
-#popup{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.7);
-display:none;
-align-items:center;
-justify-content:center;
-z-index:999;
-}
-
-.popupBox{
-background:#140021;
-padding:25px;
-border-radius:18px;
-text-align:center;
-width:80%;
-max-width:320px;
-box-shadow:0 0 25px #7b2cff;
-}
-</style>
-
-</head>
-
-<body>
-
-<div id="menu" class="sideMenu">
-<a href="#" onclick="openSubscription()">Subscription</a>
-<a href="#" onclick="installApp()">⬇ Install App</a>
-<a href="#" onclick="shareApp()">Share App</a>
-<a href="about.html">About</a>
-<a href="privacy.html">Privacy</a>
-<a href="terms.html">Terms</a>
-<a href="#" onclick="logout()">Logout</a>
-</div>
-
-<div id="menuOverlay"></div>
-
-<div class="header">
-<div class="menuBtn" onclick="toggleMenu()">☰</div>
-<div class="logo"><img src="icon.png"></div>
-<div>ReplyShastra</div>
-<div id="username" class="username"></div>
-</div>
-
-<div id="chat" class="chatbox"></div>
-
-<div class="inputArea">
-<input id="text" placeholder="Describe your situation...">
-<button class="sendBtn" onclick="send()">Send</button>
-</div>
-
-<div id="popup">
-  <div class="popupBox">
-    <h2>📲 Install App</h2>
-    <p style="opacity:.7;margin:10px 0">
-    Install ReplyShastra for best experience 🚀
-    </p>
-
-    <button onclick="installApp()" style="width:100%;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,#7b2cff,#b067ff);color:white;">
-    Install Now
-    </button>
-
-    <button onclick="closePopup()" style="margin-top:10px;background:none;border:none;color:#aaa;">
-    Later
-    </button>
-  </div>
-</div>
-
-<audio id="sendSound" src="send.mp3"></audio>
-<audio id="replySound" src="reply.mp3"></audio>
+<!-- ⚠️ SAME HEAD + CSS + HTML (unchanged upar ka sab same rehne de) -->
 
 <script>
 
-// 🔥 FIREBASE
+// 🔥 FIREBASE (same)
 firebase.initializeApp({
 apiKey: "AIzaSyABlrB9kBCJV1YS-8t3SJrqHUfPqB-7lMo",
 authDomain: "replyshastra.firebaseapp.com",
@@ -237,11 +31,36 @@ const popup = document.getElementById("popup");
 const sendSound = document.getElementById("sendSound");
 const replySound = document.getElementById("replySound");
 
-// 🔥 SOUND UNLOCK
+// 🔊 SOUND UNLOCK
 let soundEnabled = false;
 document.body.addEventListener('click', ()=>{
 soundEnabled = true;
 },{once:true});
+
+// 🧠 AI SYSTEM PROMPT
+const systemPrompt = `
+You are a confident, smart Relationship Coach.
+
+Style:
+- Hinglish (Hindi + English mix)
+- Friendly but slightly dominant
+- Real advice, no boring gyaan
+
+You help with:
+- breakup
+- attraction
+- texting
+- girlfriend issues
+
+Rules:
+- Short replies
+- Practical advice
+- Sometimes ask 1 smart question
+- Understand emotions deeply
+
+IMPORTANT:
+Reply in same language as user.
+`;
 
 // MENU
 let open=false;
@@ -261,8 +80,10 @@ chat.appendChild(div);
 chat.scrollTop=chat.scrollHeight;
 }
 
-function send(){
-let msg=text.value.trim();
+// 🚀 AI SEND FUNCTION (MAIN UPGRADE)
+async function send(){
+
+let msg = text.value.trim();
 if(!msg) return;
 
 // 🔊 SEND SOUND
@@ -274,7 +95,35 @@ sendSound.play().catch(()=>{});
 addMessage(msg,"user");
 text.value="";
 
-setTimeout(()=>{
+// ⏳ LOADING
+let loading = document.createElement("div");
+loading.className="msg bot";
+loading.innerText="Typing...";
+chat.appendChild(loading);
+chat.scrollTop=chat.scrollHeight;
+
+try{
+
+let res = await fetch("https://openrouter.ai/api/v1/chat/completions",{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer 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
+},
+body: JSON.stringify({
+model:"mistralai/mistral-7b-instruct",
+messages:[
+{role:"system", content: systemPrompt},
+{role:"user", content: msg}
+]
+})
+});
+
+let data = await res.json();
+let reply = data.choices[0].message.content;
+
+// remove loading
+chat.removeChild(loading);
 
 // 🔊 REPLY SOUND
 if(soundEnabled){
@@ -282,9 +131,15 @@ replySound.currentTime = 0;
 replySound.play().catch(()=>{});
 }
 
-addMessage("AI reply aayega yaha 🔥","bot");
+addMessage(reply,"bot");
 
-},1000);
+}catch(e){
+
+chat.removeChild(loading);
+addMessage("Bhai thoda error aa gaya 😅 try again","bot");
+
+}
+
 }
 
 // LOGOUT
@@ -341,6 +196,3 @@ navigator.serviceWorker.register('sw.js');
 }
 
 </script>
-
-</body>
-</html>
