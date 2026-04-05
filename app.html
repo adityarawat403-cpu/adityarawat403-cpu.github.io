@@ -278,7 +278,7 @@ async function send(){
 let msg=text.value.trim();
 if(!msg) return;
 
-// 🔊 SEND SOUND
+// sound
 if(soundEnabled){
 sendSound.currentTime = 0;
 sendSound.play().catch(()=>{});
@@ -295,11 +295,11 @@ chat.appendChild(loading);
 
 try{
 
-let res=await fetch("https://openrouter.ai/api/v1/chat/completions",{
+let res = await fetch("https://openrouter.ai/api/v1/chat/completions",{
 method:"POST",
 headers:{
 "Content-Type":"application/json",
-"Authorization":"Bearer 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
+"Authorization":"Bearer YOUR_API_KEY"
 },
 body:JSON.stringify({
 model:"mistralai/mistral-7b-instruct",
@@ -310,17 +310,21 @@ messages:[
 })
 });
 
-let data=await res.json();
+let data = await res.json();
 
-let reply="AI busy hai 😅";
-
-if(data && data.choices && data.choices.length>0){
-reply=data.choices[0].message.content;
+// REMOVE LOADING SAFE
+if(loading && loading.parentNode){
+loading.parentNode.removeChild(loading);
 }
 
-chat.removeChild(loading);
+// reply
+let reply = "AI error 😅";
 
-// 🔊 REPLY SOUND
+if(data && data.choices && data.choices[0]){
+reply = data.choices[0].message.content;
+}
+
+// sound
 if(soundEnabled){
 replySound.currentTime = 0;
 replySound.play().catch(()=>{});
@@ -330,11 +334,15 @@ addMessage(reply,"bot");
 
 }catch(e){
 
-chat.removeChild(loading);
-addMessage("Network error bhai 😅","bot");
-
+// REMOVE LOADING SAFE
+if(loading && loading.parentNode){
+loading.parentNode.removeChild(loading);
 }
 
+addMessage("Network error 😅 try again","bot");
+console.log(e);
+
+}
 }
 
 // 🔊 SEND SOUND
