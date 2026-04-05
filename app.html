@@ -1,8 +1,11 @@
-<!-- ⚠️ SAME HEAD + CSS + HTML (unchanged upar ka sab same rehne de) -->
-
 <script>
 
-// 🔥 FIREBASE (same)
+// 🔥 ERROR CATCH (WHITE SCREEN FIX)
+window.onerror = function(msg){
+console.log("Error:", msg);
+};
+
+// 🔥 FIREBASE
 firebase.initializeApp({
 apiKey: "AIzaSyABlrB9kBCJV1YS-8t3SJrqHUfPqB-7lMo",
 authDomain: "replyshastra.firebaseapp.com",
@@ -37,29 +40,19 @@ document.body.addEventListener('click', ()=>{
 soundEnabled = true;
 },{once:true});
 
-// 🧠 AI SYSTEM PROMPT
+// 🧠 AI PROMPT
 const systemPrompt = `
-You are a confident, smart Relationship Coach.
+You are a confident Relationship Coach.
 
 Style:
-- Hinglish (Hindi + English mix)
-- Friendly but slightly dominant
-- Real advice, no boring gyaan
-
-You help with:
-- breakup
-- attraction
-- texting
-- girlfriend issues
+- Hinglish
+- Smart + slightly dominant
+- Practical advice
 
 Rules:
-- Short replies
-- Practical advice
-- Sometimes ask 1 smart question
-- Understand emotions deeply
-
-IMPORTANT:
-Reply in same language as user.
+- Short reply
+- Understand emotion
+- Give real solution
 `;
 
 // MENU
@@ -80,7 +73,7 @@ chat.appendChild(div);
 chat.scrollTop=chat.scrollHeight;
 }
 
-// 🚀 AI SEND FUNCTION (MAIN UPGRADE)
+// 🚀 FINAL AI SEND FUNCTION
 async function send(){
 
 let msg = text.value.trim();
@@ -95,12 +88,11 @@ sendSound.play().catch(()=>{});
 addMessage(msg,"user");
 text.value="";
 
-// ⏳ LOADING
+// LOADING
 let loading = document.createElement("div");
 loading.className="msg bot";
 loading.innerText="Typing...";
 chat.appendChild(loading);
-chat.scrollTop=chat.scrollHeight;
 
 try{
 
@@ -120,7 +112,13 @@ messages:[
 });
 
 let data = await res.json();
-let reply = data.choices[0].message.content;
+
+// SAFE REPLY
+let reply = "Bhai AI thoda busy hai 😅";
+
+if(data && data.choices && data.choices.length > 0){
+reply = data.choices[0].message.content;
+}
 
 // remove loading
 chat.removeChild(loading);
@@ -136,7 +134,7 @@ addMessage(reply,"bot");
 }catch(e){
 
 chat.removeChild(loading);
-addMessage("Bhai thoda error aa gaya 😅 try again","bot");
+addMessage("Server error aa gaya bhai 😅","bot");
 
 }
 
@@ -177,7 +175,7 @@ function installApp(){
 if(deferredPrompt){
 deferredPrompt.prompt();
 }else{
-alert("📲 Chrome menu → Add to Home Screen");
+alert("Install option abhi available nahi hai");
 }
 }
 
