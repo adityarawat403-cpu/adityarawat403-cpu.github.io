@@ -1,189 +1,302 @@
-<script>
-
-// 🔥 FIREBASE SAFE INIT (WHITE SCREEN FIX)
-try{
-firebase.initializeApp({
-apiKey: "YOUR_API_KEY",
-authDomain: "replyshastra.firebaseapp.com",
-projectId: "replyshastra",
-appId: "1:346754998835:web:ecca09c1bb98a5f9a7f946"
-});
-}catch(e){}
-
-const auth = firebase.auth();
-
-// 🔥 LOGIN SAFE (NO WHITE SCREEN)
-auth.onAuthStateChanged(user=>{
-try{
-if(!user){
-window.location="login.html";
-}else{
-let name = user.email ? user.email.split("@")[0] : "User";
-document.getElementById("username").innerText = name;
-}
-}catch(e){
-console.log("Auth error:",e);
-}
-});
-
-// 🔥 ELEMENTS
-const menu = document.getElementById("menu");
-const menuOverlay = document.getElementById("menuOverlay");
-const chat = document.getElementById("chat");
-const text = document.getElementById("text");
-const popup = document.getElementById("popup");
-
-const sendSound = document.getElementById("sendSound");
-const replySound = document.getElementById("replySound");
-
-// 🔥 SOUND HARD FIX
-sendSound.load();
-replySound.load();
-
-let soundEnabled = false;
-
-// USER FIRST TAP = UNLOCK SOUND
-document.body.addEventListener('click', ()=>{
-soundEnabled = true;
-
-// silent play trick
-sendSound.play().then(()=>sendSound.pause()).catch(()=>{});
-replySound.play().then(()=>replySound.pause()).catch(()=>{});
-
-},{once:true});
-
-// MENU
-let open=false;
-function toggleMenu(){
-open=!open;
-menu.style.left = open ? "0" : "-260px";
-menuOverlay.style.display = open ? "block" : "none";
-}
-menuOverlay.onclick = toggleMenu;
-
-// CHAT
-function addMessage(msg,type){
-let div=document.createElement("div");
-div.className="msg "+type;
-div.innerText=msg;
-chat.appendChild(div);
-chat.scrollTop=chat.scrollHeight;
+<!DOCTYPE html>  <html lang="en">    <head>  <meta charset="UTF-8">    
+<meta name="viewport" content="width=device-width, initial-scale=1">  <title>ReplyShastra AI</title>  <link rel="manifest" href="manifest.json">    
+<meta name="theme-color" content="#7b2cff">    
+<link rel="icon" href="icon.png">  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>  <style>    
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Quicksand',sans-serif;}    body{
+background:#050008;
+color:white;
+height:100vh;
+overflow:hidden;
 }
 
-// 🔥 AI FUNCTION (FUTURE READY)
-async function getAIReply(userMsg){
-try{
-let res = await fetch("https://api.openai.com/v1/chat/completions",{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-"Authorization":"Bearer YOUR_API_KEY
-},
-body:JSON.stringify({
-model:"gpt-3.5-turbo",
-messages:[
-{
-role:"system",
-content:"You are a smart relationship coach. Give short, practical, confident replies in Hinglish."
-},
-{
-role:"user",
-content:userMsg
-}
-]
-})
-});
-
-let data = await res.json();
-return data.choices[0].message.content;
-
-}catch(e){
-return "Network error 😢 try again";
-}
+.header{
+position:fixed;
+top:0;
+left:0;
+right:0;
+height:65px;
+display:flex;
+align-items:center;
+gap:12px;
+padding:0 15px;
+background:rgba(0,0,0,.55);
+z-index:60;
+backdrop-filter:blur(10px);
 }
 
-// SEND
-async function send(){
-let msg=text.value.trim();
-if(!msg) return;
+.menuBtn{font-size:26px;cursor:pointer;}
+.logo img{width:34px;border-radius:10px;}
+.username{margin-left:auto;font-size:13px;opacity:.8;}
 
-// 🔊 SEND SOUND
-if(soundEnabled){
-sendSound.currentTime = 0;
-sendSound.play().catch(()=>{});
+.sideMenu{
+position:fixed;
+top:0;
+left:-260px;
+width:260px;
+height:100%;
+background:#140021;
+padding:20px;
+transition:.35s;
+z-index:100;
 }
 
-addMessage(msg,"user");
-text.value="";
-
-// typing effect
-addMessage("Typing...", "bot");
-
-let reply = await getAIReply(msg);
-
-// remove typing
-chat.removeChild(chat.lastChild);
-
-// 🔊 REPLY SOUND
-if(soundEnabled){
-replySound.currentTime = 0;
-replySound.play().catch(()=>{});
+.sideMenu a{
+display:block;
+margin:18px 0;
+color:white;
+text-decoration:none;
 }
 
-addMessage(reply,"bot");
+#menuOverlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.5);
+display:none;
+z-index:50;
 }
 
-// LOGOUT
-function logout(){
-auth.signOut().then(()=> window.location="login.html");
+.chatbox{
+position:fixed;
+top:65px;
+bottom:75px;
+left:0;
+right:0;
+overflow-y:auto;
+padding:15px;
+display:flex;
+flex-direction:column;
+gap:12px;
+background-image:url("weapon-bg.png");
+background-size:cover;
+background-position:center;
 }
 
-// SHARE
-function shareApp(){
-if(navigator.share){
-navigator.share({
-title:"ReplyShastra",
-text:"Best AI reply app 🔥",
-url:location.href
-});
-}else{
-alert("Sharing not supported");
-}
+.msg{
+max-width:78%;
+padding:12px;
+border-radius:18px;
+font-size:15px;
 }
 
-// SUBSCRIPTION
-function openSubscription(){
-alert("💎 Premium ₹99/month coming soon");
+.user{
+align-self:flex-end;
+background:linear-gradient(135deg,#7b2cff,#b067ff);
 }
 
-// INSTALL
-let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt',(e)=>{
-e.preventDefault();
-deferredPrompt=e;
-});
-
-function installApp(){
-if(deferredPrompt){
-deferredPrompt.prompt();
-}else{
-alert("Install option not available");
-}
+.bot{
+align-self:flex-start;
+background:#1b1b24;
 }
 
-// POPUP
-setTimeout(()=>{
-popup.style.display="flex";
-},5000);
-
-function closePopup(){
-popup.style.display="none";
+.inputArea{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+display:flex;
+gap:10px;
+padding:12px;
+background:rgba(0,0,0,.65);
 }
 
-// SW
-if('serviceWorker' in navigator){
-navigator.serviceWorker.register('sw.js');
+input{
+flex:1;
+padding:14px;
+border-radius:14px;
+border:none;
+background:#0e0e14;
+color:white;
 }
 
-</script>
+.sendBtn{
+padding:12px 18px;
+border:none;
+border-radius:14px;
+background:white;
+color:black;
+font-weight:600;
+cursor:pointer;
+}
+
+#popup{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.7);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:999;
+}
+
+.popupBox{
+background:#140021;
+padding:25px;
+border-radius:18px;
+text-align:center;
+width:80%;
+max-width:320px;
+box-shadow:0 0 25px #7b2cff;
+}
+</style>  </head>  <body>  <div id="menu" class="sideMenu">
+<a href="#" onclick="openSubscription()">Subscription</a>
+<a href="#" onclick="installApp()">⬇ Install App</a>
+<a href="#" onclick="shareApp()">Share App</a>
+<a href="about.html">About</a>
+<a href="privacy.html">Privacy</a>
+<a href="terms.html">Terms</a>
+<a href="#" onclick="logout()">Logout</a>
+
+</div>  <div id="menuOverlay"></div>  <div class="header">    
+<div class="menuBtn" onclick="toggleMenu()">☰</div>    
+<div class="logo"><img src="icon.png"></div>    
+<div>ReplyShastra</div>    
+<div id="username" class="username"></div>    
+</div>  <div id="chat" class="chatbox"></div>  <div class="inputArea">    
+<input id="text" placeholder="Describe your situation...">    
+<button class="sendBtn" onclick="send()">Send</button>    
+</div>  <div id="popup">    
+  <div class="popupBox">    
+    <h2>📲 Install App</h2>    
+    <p style="opacity:.7;margin:10px 0">    
+    Install ReplyShastra for best experience 🚀    
+    </p>  <button onclick="installApp()" style="width:100%;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,#7b2cff,#b067ff);color:white;">    
+Install Now    
+</button>    <button onclick="closePopup()" style="margin-top:10px;background:none;border:none;color:#aaa;">    
+Later    
+</button>    </div>    
+</div>  <audio id="sendSound" src="send.mp3"></audio>  
+<audio id="replySound" src="reply.mp3"></audio>  <script>    
+    
+// 🔥 FIREBASE    
+firebase.initializeApp({    
+apiKey: "AIzaSyABlrB9kBCJV1YS-8t3SJrqHUfPqB-7lMo",    
+authDomain: "replyshastra.firebaseapp.com",    
+projectId: "replyshastra",    
+appId: "1:346754998835:web:ecca09c1bb98a5f9a7f946"    
+});    
+    
+const auth = firebase.auth();    
+    
+auth.onAuthStateChanged(user=>{    
+if(!user){    
+window.location="login.html";    
+}else{    
+let name = user.email ? user.email.split("@")[0] : "User";    
+document.getElementById("username").innerText = name;    
+}    
+});    
+    
+// 🔥 ELEMENTS    
+const menu = document.getElementById("menu");    
+const menuOverlay = document.getElementById("menuOverlay");    
+const chat = document.getElementById("chat");    
+const text = document.getElementById("text");    
+const popup = document.getElementById("popup");    
+    
+const sendSound = document.getElementById("sendSound");    
+const replySound = document.getElementById("replySound");    
+    
+// 🔥 SOUND UNLOCK    
+let soundEnabled = false;    
+document.body.addEventListener('click', ()=>{    
+soundEnabled = true;    
+},{once:true});    
+    
+// MENU    
+let open=false;    
+function toggleMenu(){    
+open=!open;    
+menu.style.left = open ? "0" : "-260px";    
+menuOverlay.style.display = open ? "block" : "none";    
+}    
+menuOverlay.onclick = toggleMenu;    
+    
+// CHAT    
+function addMessage(msg,type){    
+let div=document.createElement("div");    
+div.className="msg "+type;    
+div.innerText=msg;    
+chat.appendChild(div);    
+chat.scrollTop=chat.scrollHeight;    
+}    
+    
+function send(){    
+let msg=text.value.trim();    
+if(!msg) return;    
+    
+// 🔊 SEND SOUND    
+if(soundEnabled){    
+sendSound.currentTime = 0;    
+sendSound.play().catch(()=>{});    
+}    
+    
+addMessage(msg,"user");    
+text.value="";    
+    
+setTimeout(()=>{    
+    
+// 🔊 REPLY SOUND    
+if(soundEnabled){    
+replySound.currentTime = 0;    
+replySound.play().catch(()=>{});    
+}    
+    
+addMessage("AI reply aayega yaha 🔥","bot");    
+    
+},1000);    
+}    
+    
+// LOGOUT    
+function logout(){    
+auth.signOut().then(()=> window.location="login.html");    
+}    
+    
+// SHARE    
+function shareApp(){    
+if(navigator.share){    
+navigator.share({    
+title:"ReplyShastra",    
+text:"Best AI reply app 🔥",    
+url:location.href    
+});    
+}else{    
+alert("Sharing not supported");    
+}    
+}    
+    
+// SUBSCRIPTION    
+function openSubscription(){    
+alert("💎 Premium ₹99/month coming soon");    
+}    
+    
+// INSTALL    
+let deferredPrompt;    
+    
+window.addEventListener('beforeinstallprompt',(e)=>{    
+e.preventDefault();    
+deferredPrompt=e;    
+});    
+    
+function installApp(){    
+if(deferredPrompt){    
+deferredPrompt.prompt();    
+}else{    
+alert("📲 Chrome menu → Add to Home Screen");    
+}    
+}    
+    
+// POPUP    
+setTimeout(()=>{    
+popup.style.display="flex";    
+},5000);    
+    
+function closePopup(){    
+popup.style.display="none";    
+}    
+    
+// SW    
+if('serviceWorker' in navigator){    
+navigator.serviceWorker.register('sw.js');    
+}    
+    
+</script>  </body>    </html>
