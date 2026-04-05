@@ -1,26 +1,28 @@
 <script>
 
-// 🔥 ERROR CATCH (WHITE SCREEN FIX)
-window.onerror = function(msg){
-console.log("Error:", msg);
-};
-
-// 🔥 FIREBASE
+// 🔥 FIREBASE SAFE INIT (WHITE SCREEN FIX)
+try{
 firebase.initializeApp({
-apiKey: "AIzaSyABlrB9kBCJV1YS-8t3SJrqHUfPqB-7lMo",
+apiKey: "YOUR_API_KEY",
 authDomain: "replyshastra.firebaseapp.com",
 projectId: "replyshastra",
 appId: "1:346754998835:web:ecca09c1bb98a5f9a7f946"
 });
+}catch(e){}
 
 const auth = firebase.auth();
 
+// 🔥 LOGIN SAFE (NO WHITE SCREEN)
 auth.onAuthStateChanged(user=>{
+try{
 if(!user){
 window.location="login.html";
 }else{
 let name = user.email ? user.email.split("@")[0] : "User";
 document.getElementById("username").innerText = name;
+}
+}catch(e){
+console.log("Auth error:",e);
 }
 });
 
@@ -34,26 +36,21 @@ const popup = document.getElementById("popup");
 const sendSound = document.getElementById("sendSound");
 const replySound = document.getElementById("replySound");
 
-// 🔊 SOUND UNLOCK
+// 🔥 SOUND HARD FIX
+sendSound.load();
+replySound.load();
+
 let soundEnabled = false;
+
+// USER FIRST TAP = UNLOCK SOUND
 document.body.addEventListener('click', ()=>{
 soundEnabled = true;
+
+// silent play trick
+sendSound.play().then(()=>sendSound.pause()).catch(()=>{});
+replySound.play().then(()=>replySound.pause()).catch(()=>{});
+
 },{once:true});
-
-// 🧠 AI PROMPT
-const systemPrompt = `
-You are a confident Relationship Coach.
-
-Style:
-- Hinglish
-- Smart + slightly dominant
-- Practical advice
-
-Rules:
-- Short reply
-- Understand emotion
-- Give real solution
-`;
 
 // MENU
 let open=false;
@@ -73,10 +70,41 @@ chat.appendChild(div);
 chat.scrollTop=chat.scrollHeight;
 }
 
-// 🚀 FINAL AI SEND FUNCTION
-async function send(){
+// 🔥 AI FUNCTION (FUTURE READY)
+async function getAIReply(userMsg){
+try{
+let res = await fetch("https://api.openai.com/v1/chat/completions",{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer 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
+},
+body:JSON.stringify({
+model:"gpt-3.5-turbo",
+messages:[
+{
+role:"system",
+content:"You are a smart relationship coach. Give short, practical, confident replies in Hinglish."
+},
+{
+role:"user",
+content:userMsg
+}
+]
+})
+});
 
-let msg = text.value.trim();
+let data = await res.json();
+return data.choices[0].message.content;
+
+}catch(e){
+return "Network error 😢 try again";
+}
+}
+
+// SEND
+async function send(){
+let msg=text.value.trim();
 if(!msg) return;
 
 // 🔊 SEND SOUND
@@ -88,40 +116,13 @@ sendSound.play().catch(()=>{});
 addMessage(msg,"user");
 text.value="";
 
-// LOADING
-let loading = document.createElement("div");
-loading.className="msg bot";
-loading.innerText="Typing...";
-chat.appendChild(loading);
+// typing effect
+addMessage("Typing...", "bot");
 
-try{
+let reply = await getAIReply(msg);
 
-let res = await fetch("https://openrouter.ai/api/v1/chat/completions",{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-"Authorization":"Bearer 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
-},
-body: JSON.stringify({
-model:"mistralai/mistral-7b-instruct",
-messages:[
-{role:"system", content: systemPrompt},
-{role:"user", content: msg}
-]
-})
-});
-
-let data = await res.json();
-
-// SAFE REPLY
-let reply = "Bhai AI thoda busy hai 😅";
-
-if(data && data.choices && data.choices.length > 0){
-reply = data.choices[0].message.content;
-}
-
-// remove loading
-chat.removeChild(loading);
+// remove typing
+chat.removeChild(chat.lastChild);
 
 // 🔊 REPLY SOUND
 if(soundEnabled){
@@ -130,14 +131,6 @@ replySound.play().catch(()=>{});
 }
 
 addMessage(reply,"bot");
-
-}catch(e){
-
-chat.removeChild(loading);
-addMessage("Server error aa gaya bhai 😅","bot");
-
-}
-
 }
 
 // LOGOUT
@@ -175,7 +168,7 @@ function installApp(){
 if(deferredPrompt){
 deferredPrompt.prompt();
 }else{
-alert("Install option abhi available nahi hai");
+alert("Install option not available");
 }
 }
 
