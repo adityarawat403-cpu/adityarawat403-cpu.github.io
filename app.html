@@ -228,6 +228,19 @@ document.getElementById("username").innerText = name;
 });
 
 // 🔥 ELEMENTS
+const systemPrompt = `
+You are a smart Relationship Coach.
+
+Style:
+- Hinglish
+- Confident
+- Practical advice
+
+Rules:
+- Short reply
+- Clear solution
+- Same language me reply
+`;
 const menu = document.getElementById("menu");
 const menuOverlay = document.getElementById("menuOverlay");
 const chat = document.getElementById("chat");
@@ -261,9 +274,68 @@ chat.appendChild(div);
 chat.scrollTop=chat.scrollHeight;
 }
 
-function send(){
+async function send(){
 let msg=text.value.trim();
 if(!msg) return;
+
+// 🔊 SEND SOUND
+if(soundEnabled){
+sendSound.currentTime = 0;
+sendSound.play().catch(()=>{});
+}
+
+addMessage(msg,"user");
+text.value="";
+
+// loading
+let loading=document.createElement("div");
+loading.className="msg bot";
+loading.innerText="Typing...";
+chat.appendChild(loading);
+
+try{
+
+let res=await fetch("https://openrouter.ai/api/v1/chat/completions",{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer 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
+},
+body:JSON.stringify({
+model:"mistralai/mistral-7b-instruct",
+messages:[
+{role:"system",content:systemPrompt},
+{role:"user",content:msg}
+]
+})
+});
+
+let data=await res.json();
+
+let reply="AI busy hai 😅";
+
+if(data && data.choices && data.choices.length>0){
+reply=data.choices[0].message.content;
+}
+
+chat.removeChild(loading);
+
+// 🔊 REPLY SOUND
+if(soundEnabled){
+replySound.currentTime = 0;
+replySound.play().catch(()=>{});
+}
+
+addMessage(reply,"bot");
+
+}catch(e){
+
+chat.removeChild(loading);
+addMessage("Network error bhai 😅","bot");
+
+}
+
+}
 
 // 🔊 SEND SOUND
 if(soundEnabled){
